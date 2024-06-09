@@ -1,6 +1,7 @@
 const express = require('express')
 const dbConnect = require('./db/db')
 const applicantRouter = require('./route/application.route')
+const recruiterRouter = require('./route/recruiter.route')
 
 require('dotenv').config()
 // const cors = require('cors')
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 app.use("/applicant",applicantRouter)
+app.use("/recruiter",recruiterRouter)
 
 //healthcheck
 app.get("/",(req,res)=>{
