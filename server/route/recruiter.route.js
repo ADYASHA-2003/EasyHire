@@ -1,9 +1,9 @@
 const express = require('express')
-const {addRecruiter} = require('../controller/recruiter.controller')
+const {addRecruiter, loginRecruiter} = require('../controller/recruiter.controller')
 
 const recruiterRouter = express.Router()
 
 recruiterRouter.post("/signup",addRecruiter)
-// applicantRouter.post("/signin",loginApplicant)
+recruiterRouter.post("/signin",loginRecruiter)
 
 module.exports=recruiterRouter

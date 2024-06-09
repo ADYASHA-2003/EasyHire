@@ -37,4 +37,47 @@ async function addRecruiter(req,res){
     }
 }
 
-module.exports={addRecruiter}
+//Recruiters' Login
+const loginRecruiter = async(req,res)=>{
+    try{
+        let {email,password} = req.body
+        let recruiterInfo = await Recruiter.findOne({email:email})
+        if(!recruiterInfo){
+            return res.status(400).json({message:"Unable to find recruiter.Provide valid emailId"})
+        }
+
+        let isPassValid = bcrypt.compareSync(
+            password,
+            recruiterInfo.password
+        )
+        if(isPassValid){
+            const token = jwt.sign(
+                {
+                    recruiter:{
+                        recId: recruiterInfo._id,
+                        name:recruiterInfo.name,
+                        email:recruiterInfo.email,
+                        mobile:recruiterInfo.mobile,
+                        companyName:recruiterInfo.companyName,
+                        companyLocation:recruiterInfo.companyLocation,
+                        industry:recruiterInfo.industry
+                    }
+                },
+                process.env.JWT_SECRET
+            )
+            res.status(200).json({
+                message:"Recruiter Login Successful",
+                recruiterInfo,
+                token
+            })
+        }else{
+            res.status(400).json({message:"Invalid Password"})
+        }
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json(error)
+    }
+}
+
+module.exports={addRecruiter,loginRecruiter}
