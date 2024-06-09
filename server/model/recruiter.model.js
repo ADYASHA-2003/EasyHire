@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const applicantSchema = new mongoose.Schema({
+const recruiterSchema = new mongoose.Schema({
     name:{
         type:String,
         required:true
@@ -18,22 +18,20 @@ const applicantSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    dob:{
-        type:Date,
-        required:true,
-        //remove unwanted white spaces
-        trim:true
-    },
-    gender:{
+    companyName:{
         type:String,
-        required:true,
-        enum:['male','female']
+        required:true
     },
-    location:{
+    companyLocation:{
+        type:String,
+        required:true
+    },
+    industry:{
         //optional
-        type:String,
+        type:String
     }
 })
 
-const Applicant = mongoose.model("Applicant",applicantSchema)
-module.exports = Applicant
+
+const Recruiter = mongoose.model("Recruiter",recruiterSchema)
+module.exports = Recruiter
