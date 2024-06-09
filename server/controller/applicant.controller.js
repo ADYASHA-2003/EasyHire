@@ -38,6 +38,56 @@ async function addApplicant(req,res){
     }
 }
 
+//Applicants' Login
+const loginApplicant = async(req,res)=>{
+    try{
+        let {email,password} = req.body
+
+        //Find applicant by comparing email entered with one stored in db
+        let applicantInfo = await Applicant.findOne({email:email})
+        if(!applicantInfo){
+            return res.status(400).json({message:"Unable to find applicant.Provide valid emailid"})
+        }
+
+        //Password comparision
+        let isPassValid = bcrypt.compareSync(
+            password,
+            applicantInfo.password
+        )
+        if(isPassValid){
+            const token = jwt.sign(
+                //takes valid applicant info from db and jwt secret key and carries it as decoded data
+                {
+                    //payload
+                    applicant:{
+                        applId: applicantInfo._id,
+                        name:applicantInfo.name,
+                        email:applicantInfo.email,
+                        mobile:applicantInfo.mobile,
+                        dob:applicantInfo.dob,
+                        gender:applicantInfo.gender,
+                        location:applicantInfo.location
+                    }
+                },
+                process.env.JWT_SECRET
+            )
+            // console.log(token);
+            res.status(200).json({
+                message:"Applicant Login Successful",
+                applicantInfo,
+                token
+            })
+        }else{
+            res.status(400).json({message:"Invalid Password"})
+        }
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json(error)
+    }
+}
+
 module.exports = {
-    addApplicant
+    addApplicant,
+    loginApplicant
 }
