@@ -5,7 +5,7 @@ const JobPosting = require('../model/jobPosting.model')
 async function addJobPost(req,res){
     try{
         let jobPost = await JobPosting.create(req.body)
-        res.status(201).json({"message":"Job Post added successfully"},jobPost)
+        res.status(201).json({"message":"Job Post added successfully",jobPost:jobPost})
     }
     catch(error){
         console.log(error);
@@ -34,7 +34,23 @@ async function updateJobPost(req,res){
         if(!updatedJobPost){
             return res.status(400).json({"message":"Job post not found"})
         }
-        res.status(200).json({"message":"Job post updated successfully","updatedJobPost": updatedJobPost })
+        res.status(200).json({"message":"Job post updated successfully",updatedJobPost: updatedJobPost })
+    }catch(error){
+        console.log(error);
+        res.status(400).json({message:error.message})
+    }
+}
+
+//delete a job using jpb post id
+async function deleteJobPost(req,res){
+    try{
+        const {id} = req.params
+        const deletedJobPost = await JobPosting.findByIdAndDelete(id)
+
+        if(!deletedJobPost){
+            return res.status(400).json({"message":"Job post not found"})
+        }
+        res.status(200).json({"message":"Job post deleted successfully",deletedJobPost: deletedJobPost})
     }catch(error){
         console.log(error);
         res.status(400).json({message:error.message})
@@ -42,5 +58,5 @@ async function updateJobPost(req,res){
 }
 
 module.exports = {
-    addJobPost,getAllPostsbyRecruiterId,updateJobPost
+    addJobPost,getAllPostsbyRecruiterId,updateJobPost,deleteJobPost
 }
