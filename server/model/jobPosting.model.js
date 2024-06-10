@@ -42,6 +42,10 @@ const jobPostingSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    deadline: {
+        type: Date,
+        required: true,
+    },
     recruiter: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Recruiter',
