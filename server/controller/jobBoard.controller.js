@@ -1,6 +1,7 @@
 const JobPosting = require('../model/jobPosting.model')
 const JobApplication = require('../model/jobApplication.model')
-// const multer = require('multer')
+const multer = require('multer')
+const upload = require('../middlewares/uploadResume.middleware')
 
 //Display all job posts
 async function allJobPosts(req,res){
@@ -12,7 +13,6 @@ async function allJobPosts(req,res){
         res.status(500).json({"message":error.message})
     }
 }
-
 
 //Display job post by id - view details
 const getJobPostbyId = async(req,res)=>{
@@ -34,26 +34,16 @@ const getJobPostbyId = async(req,res)=>{
     }
 }
 
-//Ensuring limit to file upload - only one file upload is expected
-// const upload = multer({
-//     limits:{fileSize:300*1024},
-//     fileFilter:(req,file,cb)=>{
-//         if(file.mimetype === 'application/pdf'){
-//             cb(null,true)
-//         }else{
-//             cb(new Error('Only PDF files allowed'))
-//         }
-//     }
-// })
-
 //Add a new job application for selected job post
 async function addJobApplication(req, res) {
     try {
-        const { jobId } = req.params; // Extract jobId from URL params
+        const { jobId } = req.params;
         const { qualification, course, university, startingYear, passingYear, keySkills } = req.body;
+        const {applId} = req.applicant
+        if (!req.file) {
+            return res.status(400).json({ message: 'Resume is required' });
+        }
 
-        // Get applId from req.user
-        const { applId } = req.user;
         const newApplication = await JobApplication.create({
             jobId,
             applicantId: applId,
@@ -62,8 +52,12 @@ async function addJobApplication(req, res) {
             university,
             startingYear,
             passingYear,
-            keySkills: keySkills.split(','), // Assuming keySkills is provided as a comma-separated string
-            // Other fields as needed
+            keySkills: keySkills.split(','), 
+            resume: {
+                data: req.file.buffer, 
+                contentType: req.file.mimetype,
+                size: req.file.size
+            }
         });
 
         res.status(201).json({ message: "Job application added successfully", newApplication });
@@ -72,7 +66,5 @@ async function addJobApplication(req, res) {
         res.status(400).json({ message: error.message });
     }
 }
-
-
 
 module.exports = {allJobPosts,getJobPostbyId,addJobApplication}

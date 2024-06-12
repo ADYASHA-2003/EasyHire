@@ -18,7 +18,7 @@ const jobApplicationSchema = new mongoose.Schema({
         default: 'Applied'
     },
     //Educational details
-    //Allow options to choose fromfor next 2
+    //Allow options to choose from for next 2
     qualification:{
         type:String,
         required:true
@@ -44,13 +44,24 @@ const jobApplicationSchema = new mongoose.Schema({
         required:true
     },
     resume: {
-        data: Buffer, // Binary data of the uploaded file
-        //pdf only : size<300kb
+        data: {
+        //stores uploaded file in binary data format
+          type: Buffer,
+          required: true
+        },
         contentType: {
-            type: String,
-            required: true
+          type: String,
+          required: true
+        },
+        size: {
+          type: Number,
+          required: true,
+          validate: {
+            validator: (value) => value <= 300000,
+            message: 'Resume size must be less than or equal to 300KB'
+          }
         }
-    },
+      },
     applicationDate: {
         type: Date,
         default: () => moment().tz('Asia/Kolkata').toDate()

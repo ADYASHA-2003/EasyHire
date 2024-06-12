@@ -11,6 +11,7 @@ const authenticateApplicant = (req,res,next)=>{
     try{
         let decodedData=jwt.verify(jwtToken,process.env.JWT_SECRET)
         req.applicant = decodedData.applicant
+        // req.user = {appId: decodedData.applicant.applId}
         next()
     }catch(error){
         console.log(error);
