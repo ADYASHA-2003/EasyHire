@@ -6,14 +6,16 @@ const jobPostingRouter = require('./route/jobPosting.route')
 const jobBoardRouter = require('./route/jobBoard.route')
 
 require('dotenv').config()
-// const cors = require('cors')
+const cors = require('cors')
 
 const PORT = process.env.PORT || 3000
 const app=express()
 
 //middlewares
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+
 
 app.use("/applicant",applicantRouter)
 app.use("/recruiter",recruiterRouter)
